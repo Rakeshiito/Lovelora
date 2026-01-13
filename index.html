@@ -16,7 +16,7 @@ html, body {
   font-family: -apple-system, BlinkMacSystemFont, Arial, sans-serif;
 }
 
-/* TAP SCREEN */
+/* TAP OVERLAY */
 #tap {
   position: fixed;
   inset: 0;
@@ -35,7 +35,7 @@ html, body {
   color: #e63946;
 }
 
-/* IMAGE FIX (REAL IMG ELEMENT) */
+/* IMAGE */
 .photo {
   position: fixed;
   top: 0;
@@ -43,7 +43,6 @@ html, body {
   transform: translateX(-50%);
   width: 140%;
   height: 90vh;
-  overflow: hidden;
   z-index: 1;
 }
 
@@ -85,7 +84,7 @@ p {
 </div>
 
 <div class="photo">
-  <img src="./your-image.jpg" alt="Love Photo">
+  <img src="/Lovelora/your-image.jpg" alt="Love Photo">
 </div>
 
 <div class="text">
@@ -93,7 +92,7 @@ p {
   <p>Forever & always ❤️</p>
 </div>
 
-<audio id="audio" src="./music.mp3" preload="auto"></audio>
+<audio id="audio" src="/Lovelora/music.mp3" preload="auto"></audio>
 
 <script>
 const tap = document.getElementById("tap");
@@ -110,6 +109,8 @@ tap.addEventListener("click", () => {
       title.textContent += text[i++];
       if (i === text.length) clearInterval(typing);
     }, 120);
+  }).catch(() => {
+    alert("Tap again to start music");
   });
 });
 </script>
