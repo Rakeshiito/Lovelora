@@ -58,9 +58,9 @@ html, body {
 /* Bottom text */
 .content {
     position: fixed;
-    bottom: 0;
+    bottom: 20px; /* moved up ~1 cm */
     width: 100%;
-    padding: 20px 18px 26px;
+    padding: 24px 20px 30px;
     text-align: center;
     z-index: 5;
     background: linear-gradient(
@@ -72,22 +72,34 @@ html, body {
 }
 
 h1 {
-    font-size: 38px;
+    font-size: 42px;
     font-weight: 700;
     color: #e63946;
-    margin: 8px 0;
-    letter-spacing: 1.2px;
+    margin: 6px 0 10px;
+    letter-spacing: 1.4px;
 }
 
 .note {
-    font-size: 15px;
+    font-size: 18px;
     color: #555;
+    margin-bottom: 10px;
+}
+
+/* Second romantic message */
+.message {
+    font-size: 16px;
+    color: #444;
+    line-height: 1.5;
+    opacity: 0;
+    transition: opacity 1.5s ease;
+    max-width: 90%;
+    margin: 0 auto;
 }
 
 /* Floating hearts */
 .heart {
     position: fixed;
-    bottom: -20px;
+    bottom: -30px;
     color: rgba(255,255,255,0.95);
     pointer-events: none;
     animation: floatUp linear forwards;
@@ -123,6 +135,10 @@ h1 {
 <div class="content">
     <h1 id="loveText"></h1>
     <div class="note">Forever & always ❤️</div>
+    <div class="message" id="spanishMsg">
+        Eres la luz de mi camino. Eres la persona más respetuosa y amorosa de mi vida.
+        Sin tu sonrisa y sin tu cariño, mi vida es muy aburrida.
+    </div>
 </div>
 
 <audio id="bgMusic" loop>
@@ -135,7 +151,7 @@ let index = 0;
 let started = false;
 const music = document.getElementById("bgMusic");
 
-/* Start everything */
+/* Start experience */
 function startExperience() {
     if (started) return;
     started = true;
@@ -153,6 +169,11 @@ function startExperience() {
     }
     typeText();
 
+    // Reveal Spanish message
+    setTimeout(() => {
+        document.getElementById("spanishMsg").style.opacity = 1;
+    }, 1200);
+
     startHeartBeat();
 }
 
@@ -161,7 +182,7 @@ function startExperience() {
     document.addEventListener(evt, startExperience, { once: true });
 });
 
-/* Hearts synced to music tempo (~70 BPM romantic) */
+/* Hearts synced to romantic tempo */
 function startHeartBeat() {
     const bpm = 70;
     const interval = 60000 / bpm;
@@ -171,10 +192,10 @@ function startHeartBeat() {
         heart.className = "heart";
         heart.innerHTML = "❤";
         heart.style.left = Math.random() * 100 + "vw";
-        heart.style.fontSize = (16 + Math.random() * 20) + "px";
-        heart.style.animationDuration = "5s";
+        heart.style.fontSize = (22 + Math.random() * 18) + "px"; // bigger hearts
+        heart.style.animationDuration = "5.5s";
         document.body.appendChild(heart);
-        setTimeout(() => heart.remove(), 5000);
+        setTimeout(() => heart.remove(), 5500);
     }, interval);
 }
 </script>
