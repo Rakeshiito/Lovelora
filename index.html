@@ -7,21 +7,19 @@
 <style>
 html, body {
     margin: 0;
+    padding: 0;
     height: 100%;
-    overflow: hidden;
     font-family: -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+    background: black;
+    overflow: hidden;
 }
 
-body {
-    background: #000;
-}
-
-/* Soft tap overlay */
+/* Tap overlay */
 .overlay {
     position: fixed;
     inset: 0;
-    background: rgba(255, 154, 158, 0.28);
-    backdrop-filter: blur(4px);
+    background: rgba(255, 154, 158, 0.35);
+    backdrop-filter: blur(5px);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -35,42 +33,36 @@ body {
 }
 
 .overlay span {
-    background: rgba(255,255,255,0.95);
+    background: white;
     padding: 16px 28px;
-    border-radius: 30px;
+    border-radius: 32px;
     font-size: 18px;
     color: #e63946;
-    box-shadow: 0 12px 30px rgba(0,0,0,0.25);
     animation: pulse 2s infinite;
 }
 
-/* Main container */
-.card {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-}
-
-/* Near full-screen image */
+/* Cinematic image */
 .photo {
-    position: absolute;
+    position: fixed;
     top: 0;
     left: -15%;
     width: 130%;
-    height: 88vh;
+    height: 90vh;
     background-image: url('your-image.jpg');
     background-size: cover;
     background-position: center;
+    z-index: 1;
+    animation: cinematicZoom 30s ease-in-out infinite alternate;
 }
 
-/* Bottom text overlay */
+/* Bottom text */
 .content {
-    position: absolute;
+    position: fixed;
     bottom: 0;
     width: 100%;
     padding: 20px 18px 26px;
     text-align: center;
+    z-index: 5;
     background: linear-gradient(
         to top,
         rgba(255,255,255,0.97),
@@ -94,40 +86,43 @@ h1 {
 
 /* Floating hearts */
 .heart {
-    position: absolute;
+    position: fixed;
     bottom: -20px;
-    font-size: 18px;
-    color: rgba(255,255,255,0.9);
-    animation: floatUp linear infinite;
+    color: rgba(255,255,255,0.95);
     pointer-events: none;
+    animation: floatUp linear forwards;
+    z-index: 4;
 }
 
 /* Animations */
-@keyframes pulse {
-    0%,100% { transform: scale(1); }
-    50% { transform: scale(1.08); }
+@keyframes cinematicZoom {
+    from { transform: scale(1); }
+    to { transform: scale(1.12); }
 }
 
 @keyframes floatUp {
     from { transform: translateY(0); opacity: 1; }
     to { transform: translateY(-120vh); opacity: 0; }
 }
+
+@keyframes pulse {
+    0%,100% { transform: scale(1); }
+    50% { transform: scale(1.08); }
+}
 </style>
 </head>
 
 <body>
 
-<!-- Tap overlay -->
 <div class="overlay" id="overlay">
     <span>Toca aquí ❤️</span>
 </div>
 
-<div class="card">
-    <div class="photo"></div>
-    <div class="content">
-        <h1 id="loveText"></h1>
-        <div class="note">Forever & always ❤️</div>
-    </div>
+<div class="photo"></div>
+
+<div class="content">
+    <h1 id="loveText"></h1>
+    <div class="note">Forever & always ❤️</div>
 </div>
 
 <audio id="bgMusic" loop>
@@ -138,20 +133,17 @@ h1 {
 const text = "I Love You Lora!!";
 let index = 0;
 let started = false;
+const music = document.getElementById("bgMusic");
 
+/* Start everything */
 function startExperience() {
     if (started) return;
     started = true;
 
-    // Hide overlay
     document.getElementById("overlay").classList.add("hidden");
 
-    // Start music (cross-platform safe)
-    const music = document.getElementById("bgMusic");
-    music.currentTime = 0;
     music.play().catch(() => {});
 
-    // Typing animation
     function typeText() {
         if (index < text.length) {
             document.getElementById("loveText").textContent += text.charAt(index);
@@ -160,24 +152,31 @@ function startExperience() {
         }
     }
     typeText();
+
+    startHeartBeat();
 }
 
-// Capture first user interaction (all platforms)
+/* Cross-platform interaction */
 ["click", "touchstart", "pointerdown"].forEach(evt => {
     document.addEventListener(evt, startExperience, { once: true });
 });
 
-// Floating hearts
-setInterval(() => {
-    const heart = document.createElement("div");
-    heart.className = "heart";
-    heart.innerHTML = "❤";
-    heart.style.left = Math.random() * 100 + "vw";
-    heart.style.animationDuration = (3 + Math.random() * 3) + "s";
-    heart.style.fontSize = (14 + Math.random() * 24) + "px";
-    document.body.appendChild(heart);
-    setTimeout(() => heart.remove(), 6000);
-}, 260);
+/* Hearts synced to music tempo (~70 BPM romantic) */
+function startHeartBeat() {
+    const bpm = 70;
+    const interval = 60000 / bpm;
+
+    setInterval(() => {
+        const heart = document.createElement("div");
+        heart.className = "heart";
+        heart.innerHTML = "❤";
+        heart.style.left = Math.random() * 100 + "vw";
+        heart.style.fontSize = (16 + Math.random() * 20) + "px";
+        heart.style.animationDuration = "5s";
+        document.body.appendChild(heart);
+        setTimeout(() => heart.remove(), 5000);
+    }, interval);
+}
 </script>
 
 </body>
