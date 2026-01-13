@@ -3,152 +3,112 @@
 <head>
 <meta charset="UTF-8">
 <title>I Love You Lora</title>
-
-<!-- Prevent favicon error -->
-<link rel="icon" href="data:,">
-
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
 
 <style>
 html, body {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    font-family: -apple-system, BlinkMacSystemFont, Arial, sans-serif;
-    background: black;
-    overflow: hidden;
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: black;
+  overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, Arial, sans-serif;
 }
 
-/* TAP OVERLAY */
-.overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(255, 154, 158, 0.35);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 20;
+/* TAP SCREEN */
+#tap {
+  position: fixed;
+  inset: 0;
+  background: rgba(255,154,158,0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
 }
 
-.overlay span {
-    background: white;
-    padding: 18px 32px;
-    border-radius: 40px;
-    font-size: 20px;
-    color: #e63946;
-    animation: pulse 2s infinite;
+#tap span {
+  background: white;
+  padding: 18px 30px;
+  border-radius: 30px;
+  font-size: 20px;
+  color: #e63946;
 }
 
 /* IMAGE */
 .photo {
-    position: fixed;
-    top: 0;
-    left: -20%;
-    width: 140%;
-    height: 92vh;
-    background-image: url("./your-image.jpg");
-    background-size: cover;
-    background-position: center;
-    animation: cinematicZoom 28s ease-in-out infinite alternate;
-    z-index: 1;
+  position: fixed;
+  top: 0;
+  left: -20%;
+  width: 140%;
+  height: 90vh;
+  background: url("./your-image.jpg") center / cover no-repeat;
 }
 
-/* TEXT CARD */
-.content {
-    position: fixed;
-    bottom: 30px;
-    width: 100%;
-    text-align: center;
-    z-index: 5;
-    padding: 28px 20px;
-    background: linear-gradient(
-        to top,
-        rgba(255,255,255,0.98),
-        rgba(255,255,255,0.85),
-        rgba(255,255,255,0)
-    );
+/* TEXT */
+.text {
+  position: fixed;
+  bottom: 30px;
+  width: 100%;
+  text-align: center;
+  background: linear-gradient(to top, white, rgba(255,255,255,0));
+  padding: 25px;
 }
 
 h1 {
-    font-size: 46px;
-    color: #e63946;
-    margin: 8px 0;
-    letter-spacing: 1.6px;
+  font-size: 44px;
+  color: #e63946;
+  margin: 6px 0;
 }
 
-.note {
-    font-size: 20px;
-    color: #555;
-    margin-bottom: 12px;
-}
-
-.message {
-    font-size: 17px;
-    color: #444;
-    line-height: 1.55;
-    opacity: 0;
-    transition: opacity 1.5s ease;
-    max-width: 92%;
-    margin: 0 auto;
-}
-
-/* HEARTS */
-.heart {
-    position: fixed;
-    bottom: -40px;
-    pointer-events: none;
-    animation: floatUp linear forwards;
-    z-index: 4;
-    color: rgba(255,255,255,0.95);
-}
-
-/* ANIMATIONS */
-@keyframes cinematicZoom {
-    from { transform: scale(1); }
-    to { transform: scale(1.14); }
-}
-
-@keyframes floatUp {
-    from { transform: translateY(0); opacity: 1; }
-    to { transform: translateY(-120vh); opacity: 0; }
-}
-
-@keyframes pulse {
-    0%,100% { transform: scale(1); }
-    50% { transform: scale(1.08); }
+p {
+  font-size: 18px;
+  color: #444;
 }
 </style>
 </head>
 
 <body>
 
-<div class="overlay" id="overlay">
-    <span>Toca aquí ❤️</span>
+<div id="tap">
+  <span>Toca aquí ❤️</span>
 </div>
 
 <div class="photo"></div>
 
-<div class="content">
-    <h1 id="loveText"></h1>
-    <div class="note">Forever & always ❤️</div>
-    <div class="message" id="spanishMsg">
-        Eres la luz de mi camino. Eres la persona más respetuosa y amorosa de mi vida.
-        Sin tu sonrisa y sin tu cariño, mi vida es muy aburrida.
-    </div>
+<div class="text">
+  <h1 id="title"></h1>
+  <p>Forever & always ❤️</p>
 </div>
 
-<audio id="music" preload="auto" loop>
-    <source src="./music.mp3" type="audio/mpeg">
-</audio>
+<audio id="audio" src="./music.mp3" preload="auto"></audio>
 
 <script>
+const tap = document.getElementById("tap");
+const audio = document.getElementById("audio");
+const title = document.getElementById("title");
 const text = "I Love You Lora!!";
-let index = 0;
-let started = false;
 
-const overlay = document.getElementById("overlay");
-const loveText = document.getElementById("loveText");
-const spanishMsg = document.getElementById("spanishMsg");
-const music = document.getElementById("music");
+tap.addEventListener("click", () => {
 
-overlay.add
+  // STEP 1: AUDIO — ONLY THIS
+  audio.play().then(() => {
+
+    // STEP 2: UI AFTER AUDIO IS UNLOCKED
+    tap.remove();
+
+    let i = 0;
+    const typing = setInterval(() => {
+      title.textContent += text[i++];
+      if (i === text.length) clearInterval(typing);
+    }, 120);
+
+  }).catch(err => {
+    alert("Audio blocked. Tap again.");
+  });
+
+});
+</script>
+
+</body>
+</html>
