@@ -4,6 +4,10 @@
 <meta charset="UTF-8">
 <title>I Love You Lora</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- THIS IS THE KEY FIX -->
+<base href="https://rakeshiito.github.io/Lovelora/">
+
 <link rel="icon" href="data:,">
 
 <style>
@@ -84,7 +88,7 @@ p {
 </div>
 
 <div class="photo">
-  <img src="/Lovelora/your-image.jpg" alt="Love Photo">
+  <img src="your-image.jpg" alt="Love Photo">
 </div>
 
 <div class="text">
@@ -92,7 +96,7 @@ p {
   <p>Forever & always ❤️</p>
 </div>
 
-<audio id="audio" src="/Lovelora/music.mp3" preload="auto"></audio>
+<audio id="audio" src="music.mp3" preload="auto"></audio>
 
 <script>
 const tap = document.getElementById("tap");
@@ -109,8 +113,6 @@ tap.addEventListener("click", () => {
       title.textContent += text[i++];
       if (i === text.length) clearInterval(typing);
     }, 120);
-  }).catch(() => {
-    alert("Tap again to start music");
   });
 });
 </script>
