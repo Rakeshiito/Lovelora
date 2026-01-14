@@ -5,7 +5,8 @@
 <title>I Love You Lora</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" href="data:,">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Great+Vibes&display=swap" rel="stylesheet">
+
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital@0;1&display=swap" rel="stylesheet">
 
 <style>
 html, body {
@@ -14,7 +15,21 @@ html, body {
   height: 100%;
   background: black;
   overflow: hidden;
-  font-family: -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+  font-family: 'Playfair Display', serif;
+}
+
+/* VIGNETTE */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(0,0,0,0) 40%,
+    rgba(0,0,0,0.25) 100%
+  );
+  z-index: 4;
 }
 
 /* Overlay */
@@ -30,9 +45,12 @@ html, body {
 }
 
 #overlay span {
-  font-family: 'Playfair Display', serif;
+  background: white;
+  padding: 18px 30px;
+  border-radius: 32px;
   font-size: 20px;
-  font-style: italic;
+  color: #e63946;
+  animation: pulse 2s infinite;
 }
 
 /* Image */
@@ -51,67 +69,61 @@ html, body {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  animation: zoom 28s ease-in-out infinite alternate;
+  animation: zoom 30s ease-in-out infinite alternate;
 }
 
-/* Text card */
+/* Content */
 .content {
   position: fixed;
   bottom: 35px;
   width: 100%;
   text-align: center;
   padding: 28px 20px;
-  background: linear-gradient(to top, rgba(255,255,255,0.98), rgba(255,255,255,0));
-  z-index: 2;
+  background: linear-gradient(to top, rgba(255,255,255,0.96), rgba(255,255,255,0));
+  z-index: 5;
 }
 
-h1 {
-  font-family: 'Great Vibes', cursive;
-  font-size: 52px;
-  color: #e63946;
-  margin: 6px 0 12px;
-  letter-spacing: 1px;
+/* Canvas handwriting */
+#handCanvas {
+  width: 100%;
+  height: 80px;
 }
 
 .note {
-  font-family: 'Playfair Display', serif;
-  font-size: 21px;
+  font-size: 20px;
   color: #6a6a6a;
   margin-bottom: 14px;
   font-style: italic;
 }
 
 .message {
-  font-family: 'Playfair Display', serif;
   font-size: 18.5px;
   color: #444;
-  line-height: 1.65;
+  line-height: 1.6;
   max-width: 92%;
   margin: 0 auto;
   opacity: 0;
   transition: opacity 1.6s ease;
 }
 
-/* Hearts */
-.heart {
-  position: fixed;
-  bottom: -40px;
-  color: rgba(255,255,255,0.95);
-  font-size: 30px;
-  animation: floatUp linear forwards;
+/* Sparkles */
+.sparkle {
+  position: absolute;
+  font-size: 14px;
+  animation: sparkle 1.2s ease-out forwards;
   pointer-events: none;
-  z-index: 3;
+}
+
+@keyframes sparkle {
+  0% { transform: scale(0); opacity: 1; }
+  60% { transform: scale(1); opacity: 1; }
+  100% { transform: translateY(-18px) scale(0); opacity: 0; }
 }
 
 /* Animations */
 @keyframes zoom {
   from { transform: scale(1); }
   to { transform: scale(1.12); }
-}
-
-@keyframes floatUp {
-  from { transform: translateY(0); opacity: 1; }
-  to { transform: translateY(-120vh); opacity: 0; }
 }
 
 @keyframes pulse {
@@ -128,11 +140,11 @@ h1 {
 </div>
 
 <div class="photo">
-  <img src="IMG_0329.jpg" alt="Love Photo">
+  <img src="IMG_0329.jpg" alt="">
 </div>
 
 <div class="content">
-  <h1 id="loveText"></h1>
+  <canvas id="handCanvas"></canvas>
   <div class="note">Forever & always ❤️</div>
   <div class="message" id="msg">
     Eres la luz de mi camino.  
@@ -146,54 +158,70 @@ h1 {
 <script>
 const overlay = document.getElementById("overlay");
 const music = document.getElementById("music");
-const loveText = document.getElementById("loveText");
+const canvas = document.getElementById("handCanvas");
+const ctx = canvas.getContext("2d");
 const msg = document.getElementById("msg");
 
 const text = "I Love You Lora!!";
 let index = 0;
 let started = false;
 
+/* Canvas setup */
+function resizeCanvas() {
+  canvas.width = canvas.offsetWidth;
+  canvas.height = canvas.offsetHeight;
+}
+resizeCanvas();
+window.addEventListener("resize", resizeCanvas);
+
+/* Handwriting draw */
+function drawHandwriting() {
+  ctx.font = "48px 'Great Vibes'";
+  ctx.lineCap = "round";
+  ctx.strokeStyle = "#e63946";
+
+  let x = 30;
+  let y = 60;
+
+  const interval = setInterval(() => {
+    const char = text[index];
+    if (!char) {
+      clearInterval(interval);
+      msg.style.opacity = 1;
+      return;
+    }
+
+    const pressure = 2 + Math.random() * 1.6;
+    ctx.lineWidth = pressure;
+    ctx.strokeText(char, x, y);
+
+    spawnSparkle(x + 10, y - 20);
+
+    x += ctx.measureText(char).width;
+    index++;
+  }, 140);
+}
+
+/* Sparkles */
+function spawnSparkle(x, y) {
+  const s = document.createElement("div");
+  s.className = "sparkle";
+  s.textContent = "✨";
+  s.style.left = x + "px";
+  s.style.top = (canvas.getBoundingClientRect().top + y) + "px";
+  document.body.appendChild(s);
+  setTimeout(() => s.remove(), 1200);
+}
+
+/* Start */
 overlay.addEventListener("click", () => {
   if (started) return;
   started = true;
+  overlay.remove();
 
-  // AUDIO FIRST (critical for all platforms)
-  music.play().then(() => {
-
-    overlay.remove();
-
-    // Typing animation
-    const typer = setInterval(() => {
-      loveText.textContent += text[index++];
-      if (index === text.length) clearInterval(typer);
-    }, 120);
-
-    // Reveal message
-    setTimeout(() => {
-      msg.style.opacity = 1;
-    }, 1400);
-
-    // Hearts synced to romantic tempo
-    startHearts();
-
-  });
+  music.play().catch(() => {});
+  drawHandwriting();
 });
-
-function startHearts() {
-  const bpm = 70;
-  const interval = 60000 / bpm;
-
-  setInterval(() => {
-    const heart = document.createElement("div");
-    heart.className = "heart";
-    heart.innerHTML = "❤️";
-    heart.style.left = Math.random() * 100 + "vw";
-    heart.style.fontSize = (30 + Math.random() * 14) + "px";
-    heart.style.animationDuration = "6s";
-    document.body.appendChild(heart);
-    setTimeout(() => heart.remove(), 6000);
-  }, interval);
-}
 </script>
 
 </body>
